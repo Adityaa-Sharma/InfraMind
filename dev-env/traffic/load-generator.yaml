@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: traffic-generator
+  namespace: apps
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: traffic-generator
+  template:
+    metadata:
+      labels:
+        app: traffic-generator
+    spec:
+      containers:
+        - name: traffic
+          image: busybox
+          command:
+            - sh
+            - -c
+            - |
+              while true; do
+                wget -q -O- http://checkout-api.apps.svc.cluster.local;
+                sleep 1;
+              done
