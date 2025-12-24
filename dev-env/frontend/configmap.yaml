@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: inframind-frontend-html
+  namespace: apps
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>InfraMind Dev UI</title>
+      <style>
+        body { font-family: Arial; padding: 20px; }
+        .healthy { color: green; }
+        .warning { color: orange; }
+        .critical { color: red; }
+      </style>
+    </head>
+    <body>
+      <h1>InfraMind (Dev)</h1>
+
+      <h2>Services</h2>
+      <pre id="services">Loading...</pre>
+
+      <h2>Dependencies</h2>
+      <pre id="deps">Loading...</pre>
+
+      <h2>Current RCA</h2>
+      <pre id="rca">Loading...</pre>
+
+      <script>
+        async function load() {
+          // These will later point to InfraMind backend
+          document.getElementById("services").innerText =
+            JSON.stringify({ checkout: "healthy", payment: "healthy", redis: "healthy" }, null, 2);
+
+          document.getElementById("deps").innerText =
+            JSON.stringify({ checkout: ["payment", "redis"] }, null, 2);
+
+          document.getElementById("rca").innerText =
+            "No active incidents";
+        }
+        load();
+      </script>
+    </body>
+    </html>

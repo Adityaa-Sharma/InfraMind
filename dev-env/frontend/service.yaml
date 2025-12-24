@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: inframind-frontend
+  namespace: apps
+spec:
+  selector:
+    app: inframind-frontend
+  ports:
+    - port: 80
+      targetPort: 80
