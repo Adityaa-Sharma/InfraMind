@@ -6,41 +6,306 @@ metadata:
 data:
   index.html: |
     <!DOCTYPE html>
-    <html>
+    <html lang="en">
     <head>
-      <title>InfraMind Dev UI</title>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>InfraMind - Dev UI</title>
       <style>
-        body { font-family: Arial; padding: 20px; }
-        .healthy { color: green; }
-        .warning { color: orange; }
-        .critical { color: red; }
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        body {
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          min-height: 100vh;
+          padding: 20px;
+          color: #333;
+        }
+
+        .container {
+          max-width: 1400px;
+          margin: 0 auto;
+        }
+
+        header {
+          background: rgba(255, 255, 255, 0.95);
+          padding: 30px;
+          border-radius: 15px;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+          margin-bottom: 30px;
+          backdrop-filter: blur(10px);
+        }
+
+        h1 {
+          font-size: 2.5em;
+          color: #667eea;
+          display: flex;
+          align-items: center;
+          gap: 15px;
+        }
+
+        h1::before {
+          content: "🧠";
+          font-size: 1.2em;
+        }
+
+        .subtitle {
+          color: #666;
+          font-size: 0.9em;
+          margin-top: 8px;
+          font-weight: normal;
+        }
+
+        .grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+          gap: 25px;
+          margin-bottom: 25px;
+        }
+
+        .card {
+          background: rgba(255, 255, 255, 0.95);
+          border-radius: 15px;
+          padding: 25px;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+          backdrop-filter: blur(10px);
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h2 {
+          color: #667eea;
+          font-size: 1.5em;
+          margin-bottom: 15px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          border-bottom: 2px solid #667eea;
+          padding-bottom: 10px;
+        }
+
+        .service-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 12px 15px;
+          margin: 8px 0;
+          background: #f8f9fa;
+          border-radius: 8px;
+          border-left: 4px solid transparent;
+          transition: all 0.3s ease;
+        }
+
+        .service-item:hover {
+          background: #e9ecef;
+          transform: translateX(5px);
+        }
+
+        .service-name {
+          font-weight: 600;
+          font-size: 1.1em;
+        }
+
+        .status-badge {
+          padding: 6px 15px;
+          border-radius: 20px;
+          font-size: 0.85em;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .healthy {
+          background: #d4edda;
+          color: #155724;
+          border-left-color: #28a745;
+        }
+
+        .warning {
+          background: #fff3cd;
+          color: #856404;
+          border-left-color: #ffc107;
+        }
+
+        .critical {
+          background: #f8d7da;
+          color: #721c24;
+          border-left-color: #dc3545;
+        }
+
+        .dependency-graph {
+          background: #f8f9fa;
+          padding: 20px;
+          border-radius: 8px;
+          font-family: 'Courier New', monospace;
+          font-size: 0.95em;
+          line-height: 1.8;
+          overflow-x: auto;
+        }
+
+        .dependency-item {
+          margin: 5px 0;
+          padding: 8px 12px;
+          background: white;
+          border-radius: 6px;
+          border-left: 3px solid #667eea;
+        }
+
+        .rca-status {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          padding: 20px;
+          border-radius: 10px;
+          text-align: center;
+          font-size: 1.1em;
+          font-weight: 500;
+        }
+
+        .rca-status.has-incident {
+          background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+        }
+
+        .loading {
+          display: inline-block;
+          animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+
+        .refresh-btn {
+          background: #667eea;
+          color: white;
+          border: none;
+          padding: 12px 30px;
+          border-radius: 8px;
+          cursor: pointer;
+          font-size: 1em;
+          font-weight: 600;
+          transition: all 0.3s ease;
+          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .refresh-btn:hover {
+          background: #5568d3;
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .refresh-btn:active {
+          transform: translateY(0);
+        }
+
+        .timestamp {
+          color: #666;
+          font-size: 0.85em;
+          margin-top: 10px;
+          text-align: right;
+        }
+
+        @media (max-width: 768px) {
+          .grid {
+            grid-template-columns: 1fr;
+          }
+          
+          h1 {
+            font-size: 1.8em;
+          }
+        }
       </style>
     </head>
     <body>
-      <h1>InfraMind (Dev)</h1>
+      <div class="container">
+        <header>
+          <h1>
+            InfraMind
+            <span class="subtitle">Development Environment</span>
+          </h1>
+          <button class="refresh-btn" onclick="load()">🔄 Refresh Data</button>
+          <div class="timestamp" id="timestamp"></div>
+        </header>
 
-      <h2>Services</h2>
-      <pre id="services">Loading...</pre>
+        <div class="grid">
+          <div class="card">
+            <h2>📊 Services Status</h2>
+            <div id="services" class="loading">Loading...</div>
+          </div>
 
-      <h2>Dependencies</h2>
-      <pre id="deps">Loading...</pre>
+          <div class="card">
+            <h2>🔗 Service Dependencies</h2>
+            <div id="deps" class="loading">Loading...</div>
+          </div>
+        </div>
 
-      <h2>Current RCA</h2>
-      <pre id="rca">Loading...</pre>
+        <div class="card">
+          <h2>🔍 Root Cause Analysis</h2>
+          <div id="rca" class="loading">Loading...</div>
+        </div>
+      </div>
 
       <script>
-        async function load() {
-          // These will later point to InfraMind backend
-          document.getElementById("services").innerText =
-            JSON.stringify({ checkout: "healthy", payment: "healthy", redis: "healthy" }, null, 2);
-
-          document.getElementById("deps").innerText =
-            JSON.stringify({ checkout: ["payment", "redis"] }, null, 2);
-
-          document.getElementById("rca").innerText =
-            "No active incidents";
+        function updateTimestamp() {
+          const now = new Date();
+          document.getElementById("timestamp").innerText = 
+            "Last updated: " + now.toLocaleTimeString();
         }
+
+        async function load() {
+          updateTimestamp();
+
+          // Simulate loading delay for realism
+          await new Promise(resolve => setTimeout(resolve, 500));
+
+          // Services Status
+          const services = { 
+            checkout: "healthy", 
+            payment: "healthy", 
+            redis: "healthy" 
+          };
+          
+          const servicesContainer = document.getElementById("services");
+          servicesContainer.innerHTML = Object.entries(services).map(([name, status]) => `
+            <div class="service-item ${status}">
+              <span class="service-name">${name}</span>
+              <span class="status-badge ${status}">${status}</span>
+            </div>
+          `).join('');
+
+          // Dependencies Graph
+          const deps = { checkout: ["payment", "redis"] };
+          const depsContainer = document.getElementById("deps");
+          depsContainer.innerHTML = '<div class="dependency-graph">' +
+            Object.entries(deps).map(([service, dependencies]) => `
+              <div class="dependency-item">
+                <strong>${service}</strong><br>
+                ${dependencies.map(dep => `  └─ ${dep}`).join('<br>')}
+              </div>
+            `).join('') + '</div>';
+
+          // RCA Status
+          const rcaContainer = document.getElementById("rca");
+          rcaContainer.innerHTML = `
+            <div class="rca-status">
+              ✅ No active incidents detected
+            </div>
+          `;
+        }
+
+        // Load data on page load
         load();
+
+        // Auto-refresh every 30 seconds
+        setInterval(load, 30000);
       </script>
     </body>
     </html>

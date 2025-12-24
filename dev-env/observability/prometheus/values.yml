@@ -1,6 +1,9 @@
-alertmanager:
+grafana:
   enabled: true
 
-server:
-  global:
-    scrape_interval: 15s
+prometheus:
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    scrapeInterval: 15s
+    evaluationInterval: 15s
