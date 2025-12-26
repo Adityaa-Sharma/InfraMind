@@ -1,0 +1,14 @@
+# Prometheus Ingress Configuration Patch
+# This ensures Prometheus works correctly behind the ingress
+# Apply after helm install with: kubectl apply -f observability/prometheus/ingress-patch.yaml
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config-patch
+  namespace: observability
+data:
+  prometheus.yml: |
+    global:
+      external_url: http://observability.local/prometheus
+      route_prefix: /

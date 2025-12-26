@@ -19,6 +19,15 @@ sleep 10
 echo "📦 Creating namespaces..."
 kubectl apply -f namespaces/
 
+echo "🌐 Installing Nginx Ingress Controller..."
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
+
+echo "⏳ Waiting for ingress controller to be ready..."
+kubectl wait --namespace ingress-nginx \
+  --for=condition=ready pod \
+  --selector=app.kubernetes.io/component=controller \
+  --timeout=90s
+
 echo "📊 Installing Prometheus..."
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts || true
 helm repo update
@@ -47,6 +56,9 @@ kubectl apply -f traffic/
 echo "🎨 Deploying dev frontend..."
 kubectl apply -f frontend/
 
+echo "🌐 Deploying Ingress resources..."
+kubectl apply -f ingress/
+
 echo "⏳ Waiting for apps to become ready..."
 kubectl rollout status deployment checkout-api -n apps
 kubectl rollout status deployment payment-api -n apps
@@ -56,11 +68,24 @@ echo "========================================="
 echo "✅ InfraMind DEV CLUSTER READY"
 echo "========================================="
 
+echo "kubectl get ingress -A"
 echo ""
-echo "🔎 Verify:"
-echo "kubectl get pods -A"
+echo "🌐 Access via Ingress (add to /etc/hosts or C:\\Windows\\System32\\drivers\\etc\\hosts):"
+echo "127.0.0.1 inframind.local"
+echo "127.0.0.1 observability.local"
 echo ""
-echo "🌐 Access:"
+echo "Then access:"
+echo "Frontend      : http://inframind.local"
+echo "Checkout API  : http://inframind.local/api/checkout"
+echo "Payment API   : http://inframind.local/api/payment"
+echo "Prometheus    : http://observability.local/prometheus"
+echo "Grafana       : http://observability.local/grafana"
+echo "Loki          : http://observability.local/loki"
+echo ""
+echo "📝 Alternative (Port-forward):"
+echo "Prometheus : kubectl port-forward svc/prometheus-kube-prometheus-prometheus 9090:9090 -n observability"
+echo "Grafana    : kubectl port-forward svc/prometheus-grafana 3001:80 -n observability"
+echo "Frontend   : kubectl port-forward svc/inframind-frontend 3000:80 -n apps
 echo "Prometheus : kubectl port-forward svc/prometheus-kube-prometheus-prometheus 9090:9090 -n observability"
 echo "Grafana    : kubectl port-forward svc/prometheus-grafana 3001:80 -n observability"
 echo "Frontend   : kubectl port-forward svc/inframind-frontend 3000:80 -n inframind-dev"
