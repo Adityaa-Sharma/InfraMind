@@ -1,0 +1,14 @@
+apiVersion: v2
+name: inframind-agent
+description: Centralized log aggregation for Kubernetes - see all logs at one port
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - logging
+  - elk
+  - observability
+  - kubernetes
+maintainers:
+  - name: InfraMind Team
+home: https://github.com/yourusername/InfraMind

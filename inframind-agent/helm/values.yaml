@@ -1,0 +1,50 @@
+# InfraMind Agent - Centralized Logging Configuration
+
+# Namespace where agent will be installed
+namespace: inframind
+
+# Elasticsearch configuration
+elasticsearch:
+  enabled: true
+  replicas: 1
+  storage:
+    size: 10Gi
+    storageClass: ""  # Leave empty for default storage class
+  resources:
+    requests:
+      memory: "1Gi"
+      cpu: "500m"
+    limits:
+      memory: "2Gi"
+      cpu: "1000m"
+
+# Kibana configuration (Web UI for logs)
+kibana:
+  enabled: true
+  port: 5601
+  nodePort: 30561  # External access via NodePort
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+    limits:
+      memory: "1Gi"
+      cpu: "500m"
+
+# Fluent Bit configuration (Log collector)
+fluentbit:
+  enabled: true
+  # Collect logs from all namespaces
+  allNamespaces: true
+  # Or specify specific namespaces (leave empty for all)
+  namespaces: []
+  # namespaces:
+  #   - apps
+  #   - default
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
